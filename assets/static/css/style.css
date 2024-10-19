@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+
+@layer utilities {
+  .cool-text-gradient {
+    @apply text-transparent bg-clip-text bg-gradient-to-tl from-stone-200 via-orange-500 to-orange-200;
+  }
+}
