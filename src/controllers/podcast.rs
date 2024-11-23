@@ -4,14 +4,7 @@
 use axum::extract::Multipart;
 use loco_rs::prelude::*;
 
-use crate::{services, views};
-
-pub async fn render_index(
-    ViewEngine(v): ViewEngine<TeraView>,
-    State(ctx): State<AppContext>,
-) -> Result<impl IntoResponse> {
-    views::podcast::index(v, &ctx).await
-}
+use crate::services;
 
 pub async fn list(State(ctx): State<AppContext>) -> Result<Response> {
     let items = services::podcasts::get_all_podcasts(&ctx).await?;
@@ -44,6 +37,6 @@ pub fn routes() -> Routes {
         .prefix("/api/podcasts")
         .add("/", get(list))
         .add("/", post(upload_podcast))
-        .add("/{id}", get(get_one))
-        .add("/{id}", delete(delete_podcast))
+        .add("/:id", get(get_one))
+        .add("/:id", delete(delete_podcast))
 }

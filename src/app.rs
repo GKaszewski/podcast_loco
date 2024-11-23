@@ -15,9 +15,7 @@ use loco_rs::{
 use migration::Migrator;
 use sea_orm::DatabaseConnection;
 
-use crate::{
-    controllers, initializers, models::_entities::users, tasks, workers::downloader::DownloadWorker,
-};
+use crate::{controllers, models::_entities::users, tasks, workers::downloader::DownloadWorker};
 
 pub struct App;
 #[async_trait]
@@ -41,13 +39,12 @@ impl Hooks for App {
     }
 
     async fn initializers(_ctx: &AppContext) -> Result<Vec<Box<dyn Initializer>>> {
-        Ok(vec![Box::new(
-            initializers::view_engine::ViewEngineInitializer,
-        )])
+        Ok(vec![])
     }
 
     fn routes(_ctx: &AppContext) -> AppRoutes {
         AppRoutes::with_default_routes()
+            .add_route(controllers::website::routes())
             .add_route(controllers::podcast::routes())
             .add_route(controllers::auth::routes())
             .add_route(controllers::user::routes())

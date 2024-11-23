@@ -17,18 +17,20 @@ migration = { path = "migration" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tokio = { version = "1.33.0", default-features = false }
+tower = { version = "0.5.1", features = ["util"] }
+tower-http = { version = "0.6.1", features = ["fs", "trace"] }
 async-trait = "0.1.74"
 tracing = "0.1.40"
 chrono = "0.4"
 validator = { version = "0.18" }
 sea-orm = { version = "1.1.0", features = [
-  "sqlx-sqlite",
-  "sqlx-postgres",
-  "runtime-tokio-rustls",
-  "macros",
+    "sqlx-sqlite",
+    "sqlx-postgres",
+    "runtime-tokio-rustls",
+    "macros",
 ] }
 
-axum = { version = "0.7.5", features = ["multipart"]}
+axum = { version = "0.7.5", features = ["multipart"] }
 include_dir = "0.7"
 uuid = { version = "1.6.0", features = ["v4"] }
 tracing-subscriber = { version = "0.3.17", features = ["env-filter", "json"] }
@@ -38,6 +40,13 @@ fluent-templates = { version = "0.8.0", features = ["tera"] }
 unic-langid = "0.9.4"
 bytes = "1.7.2"
 # /view engine
+
+axum-range = "0.4.0"
+axum-extra = { version = "0.9.4", features = [
+    "multipart",
+    "typed-header",
+    "cookie",
+] }
 
 [[bin]]
 name = "podcast_loco-cli"
