@@ -7,7 +7,7 @@ logger:
   # Enable pretty backtrace (sets RUST_BACKTRACE=1)
   pretty_backtrace: true
   # Log level, options: trace, debug, info, warn or error.
-  level: debug
+  level: {{ get_env(name="LOGGING_LEVEL", default="debug") }}
   # Define the logging format. options: compact, pretty or json
   format: compact
   # By default the logger has filtering only logs that came from your code or logs that came from `loco` framework. to see all third party libraries
@@ -16,11 +16,11 @@ logger:
 
 # Web server configuration
 server:
-  binding: 0.0.0.0
+  binding: {{ get_env(name="BINDING", default="0.0.0.0") }}
   # Port on which the server will listen. the server binding is 0.0.0.0:{PORT}
-  port: 5150
+  port: {{ get_env(name="PORT", default="5150") }}
   # The UI hostname or IP address that mailers will point to.
-  host: http://localhost:5150
+  host: {{ get_env(name="HOST", default="http://localhost:5150") }}
   # Out of the box middleware configuration. to disable middleware you can changed the `enable` field to `false` of comment the middleware block
   middlewares:
     cors:
@@ -70,7 +70,7 @@ mailer:
 # Database Configuration
 database:
   # Database connection URI
-  uri: {{ get_env(name="DATABASE_URL", default="sqlite://podcast_db.sqlite?mode=rwc") }}
+  uri: {{ get_env(name="DATABASE_URL", default="postgres://postgres:postgres@localhost:5432/podcast") }}
   # When enabled, the sql query will be logged.
   enable_logging: false
   # Set the timeout duration when acquiring a connection.
@@ -94,6 +94,6 @@ auth:
   # JWT authentication
   jwt:
     # Secret key for token generation and verification
-    secret: PqRwLF2rhHe8J22oBeHy
+    secret: {{ get_env(name="JWT_SECRET", default="PqRwLF2rhHe8J22oBeHy") }}
     # Token expiration time in seconds
     expiration: 604800 # 7 days

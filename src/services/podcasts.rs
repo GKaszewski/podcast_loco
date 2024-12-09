@@ -1,6 +1,7 @@
 use std::path::PathBuf;
 
 use axum::extract::Multipart;
+use axum::http::HeaderMap;
 use axum_extra::headers::Range;
 use axum_extra::TypedHeader;
 use tokio::fs::File;
@@ -138,7 +139,7 @@ pub async fn serve_audio_file(
     range: Option<TypedHeader<Range>>,
     file_name: &str,
     ctx: &AppContext,
-) -> Result<Ranged<KnownSize<File>>> {
+) -> Result<(HeaderMap, Ranged<KnownSize<File>>)> {
     let audio = match get_audio_by_file_name(&file_name, &ctx).await {
         Ok(audio) => audio,
         Err(_) => return not_found(),
@@ -146,13 +147,22 @@ pub async fn serve_audio_file(
 
     let path = PathBuf::from("audio/podcasts/").join(&audio.file_name);
 
-    tracing::info!("Path: {:?}", path);
+    let content_type = match audio.file_name.split('.').last() {
+        Some("mp3") => "audio/mpeg",
+        Some("ogg") => "audio/ogg",
+        Some("wav") => "audio/wav",
+        Some("flac") => "audio/flac",
+        _ => "application/octet-stream",
+    };
+
+    let mut headers = HeaderMap::new();
+    headers.insert("Content-Type", content_type.parse().unwrap());
 
     match File::open(path.as_path()).await {
         Ok(file) => {
             let body = KnownSize::file(file).await?;
             let range = range.map(|TypedHeader(range)| range);
-            Ok(Ranged::new(range, body))
+            Ok((headers, Ranged::new(range, body)))
         }
         Err(_) => not_found(),
     }

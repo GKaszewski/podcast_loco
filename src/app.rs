@@ -3,10 +3,10 @@ use std::path::Path;
 use async_trait::async_trait;
 use loco_rs::{
     app::{AppContext, Hooks, Initializer},
-    bgworker::{BackgroundWorker, Queue},
+    bgworker::Queue,
     boot::{create_app, BootResult, StartMode},
     controller::AppRoutes,
-    db::{self, truncate_table},
+    db::truncate_table,
     environment::Environment,
     storage::{self, Storage},
     task::Tasks,
@@ -15,7 +15,7 @@ use loco_rs::{
 use migration::Migrator;
 use sea_orm::DatabaseConnection;
 
-use crate::{controllers, models::_entities::users, tasks, workers::downloader::DownloadWorker};
+use crate::{controllers, models::_entities::users, tasks};
 
 pub struct App;
 #[async_trait]
@@ -50,12 +50,14 @@ impl Hooks for App {
             .add_route(controllers::user::routes())
     }
 
-    async fn connect_workers(ctx: &AppContext, queue: &Queue) -> Result<()> {
-        queue.register(DownloadWorker::build(ctx)).await?;
+    async fn connect_workers(_ctx: &AppContext, _queue: &Queue) -> Result<()> {
         Ok(())
     }
 
     async fn after_context(ctx: AppContext) -> Result<AppContext> {
+        // create audio directory if it doesn't exist
+        let _ = std::fs::create_dir("audio");
+
         let store = storage::drivers::local::new_with_prefix("audio").map_err(Box::from)?;
 
         Ok(AppContext {
@@ -65,7 +67,6 @@ impl Hooks for App {
     }
 
     fn register_tasks(tasks: &mut Tasks) {
-        tasks.register(tasks::seed::SeedData);
         tasks.register(tasks::create_user::CreateUserData);
     }
 
@@ -74,8 +75,7 @@ impl Hooks for App {
         Ok(())
     }
 
-    async fn seed(db: &DatabaseConnection, base: &Path) -> Result<()> {
-        db::seed::<users::ActiveModel>(db, &base.join("users.yaml").display().to_string()).await?;
+    async fn seed(_db: &DatabaseConnection, _base: &Path) -> Result<()> {
         Ok(())
     }
 }

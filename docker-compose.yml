@@ -1,0 +1,33 @@
+services:
+  web:
+    build: .
+    volumes:
+      - audio_volume:/usr/app/audio
+    environment:
+      - HOST=${HOST}
+      - DATABASE_URL=${DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - LOGGER_LEVEL=${LOGGER_LEVEL}
+      - BINDING=${BINDING}
+      - PORT=${PORT}
+    depends_on:
+      db:
+        condition: service_healthy
+    expose:
+      - ${PORT}
+  db:
+    image: postgres:latest
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+volumes:
+  postgres_data:
+  audio_volume:
