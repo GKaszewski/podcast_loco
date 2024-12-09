@@ -35,11 +35,7 @@ include_dir = "0.7"
 uuid = { version = "1.6.0", features = ["v4"] }
 tracing-subscriber = { version = "0.3.17", features = ["env-filter", "json"] }
 
-# view engine i18n
-fluent-templates = { version = "0.8.0", features = ["tera"] }
-unic-langid = "0.9.4"
 bytes = "1.7.2"
-# /view engine
 
 axum-range = "0.4.0"
 axum-extra = { version = "0.9.4", features = [
