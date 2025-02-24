@@ -12,6 +12,8 @@
   const onBulbClick = () => {
     store.isOverlayVisible = !store.isOverlayVisible;
   };
+
+  const hasPodcastSelected = $derived(store.currentPodcast !== null);
 </script>
 
 <div class="absolute top-0 left-0 z-10 flex flex-col gap-2 m-2 md:m-8">
@@ -19,6 +21,7 @@
     class="flex items-center justify-center p-4 rounded-md cursor-pointer bg-slate-800 hover:bg-slate-700 disabled:opacity-50"
     onclick={onHouseClick}
     aria-label="view"
+    disabled={!hasPodcastSelected}
   >
     {#if store.view === 'home'}
       <Disc class="text-white" />
