@@ -52,7 +52,7 @@
 
 <QueryClientProvider client={queryClient}
   ><main
-    class="flex flex-col items-center w-full min-h-screen bg-gradient-to-br from-slate-950 via-indigo-900 to-slate-900"
+    class="flex flex-col items-center w-full min-h-screen bg-linear-to-br from-slate-950 via-indigo-900 to-slate-900"
   >
     <Audio />
     {#if store.isOverlayVisible}
